@@ -1,10 +1,10 @@
 name: bmi_calculator_app
 description: BMI Calculator App
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -15,6 +15,10 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   shared_preferences: ^2.2.2
   font_awesome_flutter: ^10.6.0
+  fl_chart: ^0.68.0          # BMI Progress Chart
+  share_plus: ^9.0.0         # Share Result
+  path_provider: ^2.1.2      # Save screenshot for sharing
+  flutter_local_notifications: ^17.2.2  # Daily Reminder
 
 dev_dependencies:
   flutter_test:

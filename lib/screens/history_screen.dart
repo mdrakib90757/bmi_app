@@ -70,8 +70,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.delete_sweep_rounded,
-                    color: Colors.white),
+                icon:
+                    const Icon(Icons.delete_sweep_rounded, color: Colors.white),
                 onPressed: () => _showClearDialog(),
                 tooltip: 'Clear all',
               ),
@@ -150,8 +150,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       builder: (_) => AlertDialog(
         title: Text('Delete this result?',
             style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-        content: Text('BMI ${r.bmi} — ${r.category}',
-            style: GoogleFonts.nunito()),
+        content:
+            Text('BMI ${r.bmi} — ${r.category}', style: GoogleFonts.nunito()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -163,8 +163,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               Navigator.pop(context);
               _reload();
             },
-            child: Text('Delete',
-                style: GoogleFonts.nunito(color: Colors.red)),
+            child: Text('Delete', style: GoogleFonts.nunito(color: Colors.red)),
           ),
         ],
       ),
@@ -177,8 +176,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       builder: (_) => AlertDialog(
         title: Text('Clear all results?',
             style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-        content: Text('This cannot be undone.',
-            style: GoogleFonts.nunito()),
+        content: Text('This cannot be undone.', style: GoogleFonts.nunito()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -190,8 +188,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               Navigator.pop(context);
               _reload();
             },
-            child: Text('Clear all',
-                style: GoogleFonts.nunito(color: Colors.red)),
+            child:
+                Text('Clear all', style: GoogleFonts.nunito(color: Colors.red)),
           ),
         ],
       ),
@@ -227,8 +225,7 @@ class _HistoryCard extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           width: 52,
           height: 52,
@@ -261,8 +258,7 @@ class _HistoryCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -284,13 +280,13 @@ class _HistoryCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               '${result.height} cm  •  ${result.weight} kg  •  Age ${result.age}',
-              style: GoogleFonts.nunito(
-                  fontSize: 12, color: Colors.grey.shade500),
+              style:
+                  GoogleFonts.nunito(fontSize: 12, color: Colors.grey.shade500),
             ),
             Text(
               dateStr,
-              style: GoogleFonts.nunito(
-                  fontSize: 11, color: Colors.grey.shade400),
+              style:
+                  GoogleFonts.nunito(fontSize: 11, color: Colors.grey.shade400),
             ),
           ],
         ),

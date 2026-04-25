@@ -90,8 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _controller,
                 onPageChanged: (i) => setState(() => _currentPage = i),
                 itemCount: _pages.length,
-                itemBuilder: (_, index) =>
-                    _PageContent(data: _pages[index]),
+                itemBuilder: (_, index) => _PageContent(data: _pages[index]),
               ),
             ),
             // Dots + Button
@@ -173,10 +172,7 @@ class _PageContent extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(data.icon, size: 96, color: data.iconColor),
-          )
-              .animate()
-              .fadeIn(duration: 500.ms)
-              .scale(
+          ).animate().fadeIn(duration: 500.ms).scale(
                 begin: const Offset(0.8, 0.8),
                 curve: Curves.elasticOut,
                 duration: 700.ms,

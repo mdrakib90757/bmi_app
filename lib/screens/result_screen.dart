@@ -1,10 +1,16 @@
+// lib/screens/result_screen.dart
+// REPLACE your existing result_screen.dart
+// Added: Share Result button at the bottom
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/bmi_calculator.dart';
 import '../services/results_storage.dart';
+import '../widgets/share_result_widget.dart';
 import 'input_screen.dart';
+import 'calorie_screen.dart';
 
 class ResultScreen extends StatefulWidget {
   final BMICalculator calculator;
@@ -57,11 +63,12 @@ class _ResultScreenState extends State<ResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
-          // App Bar
           SliverAppBar(
             expandedHeight: 120,
             pinned: true,
@@ -71,7 +78,10 @@ class _ResultScreenState extends State<ResultScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [calc.categoryColor, const Color(0xFF0E9F6E)],
+                    colors: [
+                      calc.categoryColor,
+                      const Color(0xFF0E9F6E)
+                    ],
                   ),
                 ),
               ),
@@ -93,15 +103,16 @@ class _ResultScreenState extends State<ResultScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // Main BMI card
-                  _MainBmiCard(calc: calc, profileImage: widget.profileImage)
+                  // Main BMI Card
+                  _MainBmiCard(
+                      calc: calc, profileImage: widget.profileImage)
                       .animate()
                       .fadeIn(duration: 400.ms)
                       .slideY(begin: 0.1, end: 0),
 
                   const SizedBox(height: 16),
 
-                  // BMI bar
+                  // BMI Bar
                   _BmiBarCard(calc: calc)
                       .animate()
                       .fadeIn(delay: 150.ms, duration: 400.ms),
@@ -120,6 +131,67 @@ class _ResultScreenState extends State<ResultScreen> {
                       .animate()
                       .fadeIn(delay: 350.ms, duration: 400.ms),
 
+                  const SizedBox(height: 16),
+
+                  // ── NEW: Calorie Calculator shortcut ──
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CalorieScreen(
+                          weight: calc.weight,
+                          height: calc.height,
+                          age: calc.age,
+                          isMale: calc.isMale,
+                        ),
+                      ),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0E9F6E).withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: const Color(0xFF0E9F6E).withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0E9F6E).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                                Icons.local_fire_department_rounded,
+                                color: Color(0xFF0E9F6E),
+                                size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Calorie & Water Calculator',
+                                    style: GoogleFonts.nunito(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFF0E9F6E))),
+                                Text('See your daily calorie & water goals',
+                                    style: GoogleFonts.nunito(
+                                        fontSize: 11,
+                                        color: Colors.grey.shade500)),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded,
+                              size: 14, color: Color(0xFF0E9F6E)),
+                        ],
+                      ),
+                    ),
+                  ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
+
                   const SizedBox(height: 24),
 
                   // Save button
@@ -136,9 +208,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       label: Text(
                         _saved ? 'Result Saved' : 'Save Result',
                         style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
+                            fontSize: 16, fontWeight: FontWeight.w700),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _saved
@@ -146,11 +216,17 @@ class _ResultScreenState extends State<ResultScreen> {
                             : const Color(0xFF0E9F6E),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                            borderRadius: BorderRadius.circular(16)),
                       ),
                     ),
                   ).animate().fadeIn(delay: 450.ms, duration: 400.ms),
+
+                  const SizedBox(height: 12),
+
+                  // ── NEW: Share Result ──
+                  ShareResultWidget(calculator: calc)
+                      .animate()
+                      .fadeIn(delay: 500.ms, duration: 400.ms),
 
                   const SizedBox(height: 12),
 
@@ -168,20 +244,19 @@ class _ResultScreenState extends State<ResultScreen> {
                       label: Text(
                         'Recalculate',
                         style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
+                            fontSize: 16, fontWeight: FontWeight.w700),
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF1A56DB),
-                        side: const BorderSide(color: Color(0xFF1A56DB)),
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        side:
+                            const BorderSide(color: Color(0xFF1A56DB)),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                            borderRadius: BorderRadius.circular(16)),
                       ),
                     ),
-                  ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
+                  ).animate().fadeIn(delay: 550.ms, duration: 400.ms),
 
                   const SizedBox(height: 40),
                 ],
@@ -194,7 +269,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 }
 
-// ─── Sub-widgets ─────────────────────────────────────────────────────────────
+// ─── Sub-widgets (same as before) ────────────────────────────────────────────
 
 class _MainBmiCard extends StatelessWidget {
   final BMICalculator calc;
@@ -210,7 +285,10 @@ class _MainBmiCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [calc.categoryColor, calc.categoryColor.withOpacity(0.7)],
+          colors: [
+            calc.categoryColor,
+            calc.categoryColor.withOpacity(0.7)
+          ],
         ),
         boxShadow: [
           BoxShadow(
@@ -246,20 +324,17 @@ class _MainBmiCard extends StatelessWidget {
               height: 1,
             ),
           ),
-          Text(
-            'kg/m²',
-            style: GoogleFonts.nunito(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
-            ),
-          ),
+          Text('kg/m²',
+              style: GoogleFonts.nunito(
+                  fontSize: 16, color: Colors.white.withOpacity(0.8))),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.4)),
+              border:
+                  Border.all(color: Colors.white.withOpacity(0.4)),
             ),
             child: Text(
               calc.category.toUpperCase(),
@@ -295,7 +370,7 @@ class _BmiBarCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -308,72 +383,62 @@ class _BmiBarCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'BMI Scale',
-            style: GoogleFonts.nunito(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF374151),
-            ),
-          ),
+          Text('BMI Scale',
+              style: GoogleFonts.nunito(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : const Color(0xFF374151))),
           const SizedBox(height: 12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final barWidth = constraints.maxWidth;
-              final dotPos =
-                  (calc.bmiProgress * barWidth).clamp(0.0, barWidth - 16);
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 12,
+          LayoutBuilder(builder: (context, constraints) {
+            final barWidth = constraints.maxWidth;
+            final dotPos =
+                (calc.bmiProgress * barWidth).clamp(0.0, barWidth - 20);
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  height: 12,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    gradient: const LinearGradient(colors: [
+                      Color(0xFF1A56DB),
+                      Color(0xFF0E9F6E),
+                      Color(0xFFF6A723),
+                      Color(0xFFF05252),
+                    ]),
+                  ),
+                ),
+                Positioned(
+                  left: dotPos,
+                  top: -4,
+                  child: Container(
+                    width: 20,
+                    height: 20,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF1A56DB),
-                          Color(0xFF0E9F6E),
-                          Color(0xFFF6A723),
-                          Color(0xFFF05252),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: dotPos,
-                    top: -4,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: calc.categoryColor, width: 3),
-                        boxShadow: [
-                          BoxShadow(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: calc.categoryColor, width: 3),
+                      boxShadow: [
+                        BoxShadow(
                             color: Colors.black.withOpacity(0.15),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
+                            blurRadius: 4)
+                      ],
                     ),
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          }),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: ['Under', 'Normal', 'Over', 'Obese']
-                .map(
-                  (l) => Text(
-                    l,
+                .map((l) => Text(l,
                     style: GoogleFonts.nunito(
-                        fontSize: 10, color: Colors.grey.shade400),
-                  ),
-                )
+                        fontSize: 10, color: Colors.grey.shade400)))
                 .toList(),
           ),
         ],
@@ -391,21 +456,20 @@ class _StatsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
         children: [
           _InfoRow('Healthy BMI range', '18.5 – 25.0 kg/m²'),
           const Divider(height: 20),
-          _InfoRow('Healthy weight for your height', calc.normalWeightRange),
+          _InfoRow('Healthy weight for height', calc.normalWeightRange),
           const Divider(height: 20),
           if (calc.amountToLose > 0)
             _InfoRow('To reach BMI 25, lose',
@@ -439,10 +503,11 @@ class _InfoRow extends StatelessWidget {
                 fontSize: 13, color: Colors.grey.shade500)),
         Text(value,
             style: GoogleFonts.nunito(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF111928),
-            )),
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : const Color(0xFF111928))),
       ],
     );
   }
@@ -459,7 +524,8 @@ class _AdviceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: calc.categoryColor.withOpacity(0.07),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: calc.categoryColor.withOpacity(0.2)),
+        border:
+            Border.all(color: calc.categoryColor.withOpacity(0.2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,14 +534,13 @@ class _AdviceCard extends StatelessWidget {
               color: calc.categoryColor, size: 22),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              calc.advice,
-              style: GoogleFonts.nunito(
-                fontSize: 13,
-                color: const Color(0xFF374151),
-                height: 1.6,
-              ),
-            ),
+            child: Text(calc.advice,
+                style: GoogleFonts.nunito(
+                    fontSize: 13,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : const Color(0xFF374151),
+                    height: 1.6)),
           ),
         ],
       ),
